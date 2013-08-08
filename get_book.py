@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from bs4 import BeautifulSoup
+import ez_epub
 import re
 import sys
 import urllib2
@@ -11,7 +12,9 @@ def fetch(url):
   return BeautifulSoup(raw)
 
 class Annotation(object):
-  def __init__(self, title, root_url):
+  def __init__(self, title, author, root_url):
+    self.title = title
+    self.author = author
     self.url = root_url
     self.chapters = []
 
@@ -28,7 +31,14 @@ class Annotation(object):
 
     for chapter in self.chapters:
       chapter.load()
-      return
+
+  def generate_epub(self):
+    book = ez_epub.Book()
+    book.title = self.title
+    book.authors = [self.author]
+    for chapter in self.chapters:
+      book.sections.append(chapter.generate_epub())
+    return book
 
 class Chapter(object):
   def __init__(self, title, url):
@@ -50,15 +60,25 @@ class Chapter(object):
     # strip out <a> and <script>
     for tag in self.body.find_all(['a', 'script']):
       tag.extract()
-    print "Annotation for %s: %s" % (self.title, self.body)
+    #print "Annotation for %s: %s" % (self.title, self.body)
+
+  def generate_epub(self):
+    section = ez_epub.Section()
+    section.title = self.title
+    section.text = self.body
+    return section
     
 if __name__ == '__main__':
-  if len(sys.argv) != 3:
-    print "Usage: get_book.py title root_url"
+  if len(sys.argv) != 5:
+    print "Usage: get_book.py title author root_url filename"
     sys.exit(1)
 
   title = sys.argv[1]
-  root_url = sys.argv[2]
-  book = Annotation(title, root_url)
-  book.load()
+  author = sys.argv[2]
+  root_url = sys.argv[3]
+  filename = sys.argv[4]
+  annotation = Annotation(title, author, root_url)
+  annotation.load()
+  book = annotation.generate_epub()
+  book.make(filename)
 

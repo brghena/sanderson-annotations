@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
+import data
 from bs4 import BeautifulSoup
 import json
-import os
 import re
 import sys
 import urllib2
@@ -12,23 +12,22 @@ def fetch(url):
   raw = urllib2.urlopen(url).read()
   return BeautifulSoup(raw)
 
-class Annotation(object):
+class Annotation(data.Annotation):
   def __init__(self, title, author, root_url):
-    self.title = title
-    self.author = author
-    self.url = root_url
-    self.chapters = []
+    super(Annotation, self).__init__(title, author, root_url)
 
   def load(self):
     content = fetch(self.url)
     # parse out chapters
     post = content.find('div', class_='post')
+    chap_num = 1
     for link in post.find_all('a', href=re.compile('/annotation/.+')):
       title = link.get_text()
       address = link.get('href')
       address = urlparse.urljoin(self.url, address)
       #print "%s: %s" % (address, title)
-      self.chapters.append(Chapter(title, address))
+      self.chapters.append(Chapter(title, address, chap_num))
+      chap_num += 1
 
     for chapter in self.chapters:
       chapter.load()
@@ -42,25 +41,20 @@ class Annotation(object):
       'chapters': [],
     }
 
-    for i in xrange(len(self.chapters)):
-      chapter = self.chapters[i]
-      filename = os.path.join(dirname, 'chap_%02d.txt' % i)
-      chap_data = chapter.save(filename)
+    for chapter in self.chapters:
+      chap_data = chapter.save(dirname)
       data['chapters'].append(chap_data)
 
     # write data
-    filename = os.path.join(dirname, 'data.json')
-    f = open(filename, 'w')
+    f = open(self.filename(dirname), 'w')
     json.dump(data, f)
     f.close()
 
     return data
 
-class Chapter(object):
-  def __init__(self, title, url):
-    self.title = title
-    self.url = url
-    self.body = ''
+class Chapter(data.Chapter):
+  def __init__(self, title, url, number):
+    super(Chapter, self).__init__(title, url, number)
 
   def load(self):
     print "Fetching %s" % self.url
@@ -78,8 +72,8 @@ class Chapter(object):
       tag.extract()
     #print "Annotation for %s: %s" % (self.title, self.body)
 
-  def save(self, filename):
-    f = open(filename, 'w')
+  def save(self, dirname):
+    f = open(self.filename(dirname), 'w')
     text = unicode(self.body)
     # fix weird characters
     text.replace('\ufffd', '\'')
@@ -89,6 +83,7 @@ class Chapter(object):
     return {
       'title': self.title,
       'url': self.url,
+      'number': self.number,
     }
 
 if __name__ == '__main__':

@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 from bs4 import BeautifulSoup
-import ez_epub
+import json
+import os
 import re
 import sys
 import urllib2
@@ -32,13 +33,28 @@ class Annotation(object):
     for chapter in self.chapters:
       chapter.load()
 
-  def generate_epub(self):
-    book = ez_epub.Book()
-    book.title = self.title
-    book.authors = [self.author]
-    for chapter in self.chapters:
-      book.sections.append(chapter.generate_epub())
-    return book
+  def save(self, dirname):
+    # generate data
+    data = {
+      'title': self.title,
+      'author': self.author,
+      'url': self.url,
+      'chapters': [],
+    }
+
+    for i in xrange(len(self.chapters)):
+      chapter = self.chapters[i]
+      filename = os.path.join(dirname, 'chap_%02d.txt' % i)
+      chap_data = chapter.save(filename)
+      data['chapters'].append(chap_data)
+
+    # write data
+    filename = os.path.join(dirname, 'data.json')
+    f = open(filename, 'w')
+    json.dump(data, f)
+    f.close()
+
+    return data
 
 class Chapter(object):
   def __init__(self, title, url):
@@ -62,23 +78,29 @@ class Chapter(object):
       tag.extract()
     #print "Annotation for %s: %s" % (self.title, self.body)
 
-  def generate_epub(self):
-    section = ez_epub.Section()
-    section.title = self.title
-    section.text = self.body
-    return section
-    
+  def save(self, filename):
+    f = open(filename, 'w')
+    text = unicode(self.body)
+    # fix weird characters
+    text.replace('\ufffd', '\'')
+    f.write(text.encode('UTF-8'))
+    f.close()
+
+    return {
+      'title': self.title,
+      'url': self.url,
+    }
+
 if __name__ == '__main__':
   if len(sys.argv) != 5:
-    print "Usage: get_book.py title author root_url filename"
+    print "Usage: get_book.py title author root_url savedir"
     sys.exit(1)
 
   title = sys.argv[1]
   author = sys.argv[2]
   root_url = sys.argv[3]
-  filename = sys.argv[4]
+  savedir = sys.argv[4]
   annotation = Annotation(title, author, root_url)
   annotation.load()
-  book = annotation.generate_epub()
-  book.make(filename)
+  annotation.save(savedir)
 

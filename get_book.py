@@ -25,7 +25,7 @@ class Annotation(data.Annotation):
       title = link.get_text()
       address = link.get('href')
       address = urlparse.urljoin(self.url, address)
-      #print "%s: %s" % (address, title)
+      #print '%s: %s' % (address, title)
       self.chapters.append(Chapter(title, address, chap_num))
       chap_num += 1
 
@@ -57,12 +57,12 @@ class Chapter(data.Chapter):
     super(Chapter, self).__init__(title, url, number)
 
   def load(self):
-    print "Fetching %s" % self.url
+    print 'Fetching %s' % self.url
     content = fetch(self.url)
     # parse out chapters
     post = content.find('div', class_='post')
 
-    #print "Annotation for %s: %s" % (self.title, post)
+    #print 'Annotation for %s: %s' % (self.title, post)
     # load h1 class='article_title'
     self.title = post.find('h1', class_='article_title').get_text()
     # load div class='article_content'
@@ -70,7 +70,7 @@ class Chapter(data.Chapter):
     # strip out <a> and <script>
     for tag in self.body.find_all(['a', 'script']):
       tag.extract()
-    #print "Annotation for %s: %s" % (self.title, self.body)
+    #print 'Annotation for %s: %s' % (self.title, self.body)
 
   def save(self, dirname):
     f = open(self.filename(dirname), 'w')
@@ -88,7 +88,7 @@ class Chapter(data.Chapter):
 
 if __name__ == '__main__':
   if len(sys.argv) != 5:
-    print "Usage: get_book.py title author root_url savedir"
+    print 'Usage: get_book.py title author root_url savedir'
     sys.exit(1)
 
   title = sys.argv[1]

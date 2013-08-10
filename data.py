@@ -9,9 +9,13 @@ class Annotation(object):
     self.url = root_url
     self.chapters = []
 
+  def name(self):
+    return 'Annotation for %s by %s' % (
+      self.title, self.author)
+
   def display(self):
-    print 'Annotation for %s by %s (loaded from %s)' % (
-      self.title, self.author, self.url)
+    print '%s (loaded from %s)' % (
+      self.name(), self.url)
 
     for chapter in self.chapters:
       chapter.display()
@@ -26,8 +30,11 @@ class Chapter(object):
     self.body = ''
     self.number = number
 
+  def name(self):
+    return 'Chapter %02d: %s' % (self.number, self.title)
+
   def display(self):
-    print 'Chapter %0d: %s' % (self.number, self.title)
+    print '%s' % self.name()
     print '  %s...' % str(self.body)[0:100]
 
   def filename(self, datadir):

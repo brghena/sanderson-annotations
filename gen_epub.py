@@ -55,8 +55,13 @@ if __name__ == '__main__':
 
   datadir = sys.argv[1]
   epubdir = sys.argv[2]
+
+  # Strip trailing slash for stupid make()
+  if epubdir[-1] == '/':
+    epubdir = epubdir[:-1]
+
+  # read data
   annotation = Annotation(datadir)
-  #annotation.display()
   book = annotation.generate_epub()
   print 'Starting epub generation...'
   book.make(epubdir)

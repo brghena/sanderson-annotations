@@ -25,5 +25,3 @@ except ImportError:
     print('sudo pip install lxml')
     sys.exit(1)
 
-print("Success!")
-

@@ -24,14 +24,16 @@ class Annotation(object):
     return os.path.join(datadir, 'data.json')
 
 class Chapter(object):
-  def __init__(self, title, url, number):
-    self.title = title
+  def __init__(self,  url, number):
+    self.title = ''
     self.url = url
     self.body = ''
+    #Note: chapter number is for unique identification only and does not
+    #   necessarily match the actual chapter number
     self.number = number
 
   def name(self):
-    return 'Chapter %02d: %s' % (self.number, self.title)
+    return str(self.title)
 
   def display(self):
     print '%s' % self.name()

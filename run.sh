@@ -1,12 +1,21 @@
 #!/bin/bash
 
-BOOKS="elantris mistborn mistborn2 mistborn3"
+#BOOKS="elantris mistborn mistborn2 mistborn3"
+BOOKS="mistborn"
 
 declare -A URLS
 URLS[elantris]="http://www.brandonsanderson.com/annotation/book/Elantris"
 URLS[mistborn]="http://www.brandonsanderson.com/annotation/book/Mistborn"
 URLS[mistborn2]="http://www.brandonsanderson.com/annotation/book/Mistborn-2"
 URLS[mistborn3]="http://www.brandonsanderson.com/annotation/book/Mistborn-3"
+
+# need to check if requirements are satisfied
+#   better to fail now than later
+./check_requirements.py || { echo 'Requirements not satisfied'; exit 1; }
+
+#XXX: TESTING ONLY
+# need to clear out old files to re-run fetch
+rm -rf /tmp/epub/*
 
 for book in $BOOKS; do
   url=${URLS[$book]}
@@ -18,13 +27,20 @@ for book in $BOOKS; do
   # Get data
   if [ ! -d $datadir ]; then
     mkdir -p $datadir
+    echo "Fetching"
     ./get_book.py "$book Annotations" "Brandon Sanderson" "$url" "$datadir"
   fi
+  echo "Fetched"
+
+  #XXX: TESTING
+  exit 1
 
   # Create book
   rm -rf $epubdir
   rm -rf /tmp/epub/${book}*.epub
   mkdir -p $datadir
+  echo "Creating ePub"
   ./gen_epub.py "$datadir" "$epubdir"
+  echo "Created"
 done
 

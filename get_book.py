@@ -17,11 +17,15 @@ class Annotation(data.Annotation):
     super(Annotation, self).__init__(title, author, root_url)
 
   def load(self):
+    print("urlopen")
     content = fetch(self.url)
+    print(content)
     # parse out chapters
     post = content.find('div', class_='post')
+    print(post)
     chap_num = 1
     for link in post.find_all('a', href=re.compile('/annotation/.+')):
+      print("Fetching chapter: " + chap_num)
       title = link.get_text()
       address = link.get('href')
       address = urlparse.urljoin(self.url, address)

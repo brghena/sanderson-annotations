@@ -7,6 +7,7 @@ import re
 import sys
 import urllib2
 import urlparse
+import titlecase
 
 def fetch(url):
   raw = urllib2.urlopen(url).read()
@@ -14,6 +15,8 @@ def fetch(url):
 
 class Annotation(data.Annotation):
   def __init__(self, title, author, root_url):
+    # convert title to actual Title Case
+    title = titlecase.titlecase(title)
     super(Annotation, self).__init__(title, author, root_url)
 
   def load(self):
@@ -101,9 +104,9 @@ class Chapter(data.Chapter):
     for tag in self.body.find_all("div", "sh-link"):
         spoiler_paragraph = content.new_tag("p")
         spoiler_tag = content.new_tag("b")
-        spoiler_tag.string = "Spoilers Below"
+        spoiler_tag.string = "\nSpoilers Below\n"
         spoiler_paragraph.append(spoiler_tag)
-        tag.replace_with(spoiler_tag)
+        tag.replace_with(spoiler_paragraph)
         # remove div surrounding spoiler contents
         div = self.body.find("div", "sh-content")
         if div == None:
@@ -140,6 +143,7 @@ class Chapter(data.Chapter):
 
 if __name__ == '__main__':
   if len(sys.argv) != 5:
+    print(sys.argv)
     print('Usage: get_book.py title author root_url savedir')
     sys.exit(1)
 

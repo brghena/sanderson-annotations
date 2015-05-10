@@ -1,25 +1,27 @@
 #!/bin/bash
 
-#BOOKS="elantris mistborn mistborn2 mistborn3"
-BOOKS="mistborn"
+BOOKS="elantris mistborn mistborn2 mistborn3 warbreaker"
 
 declare -A URLS
+declare -A TITLES
+URLS[elantris]="http://brandonsanderson.com/annotation-elantris-introduction/"
+TITLES[elantris]="Elantris"
 URLS[mistborn]="http://www.brandonsanderson.com/annotation-mistborn-title-page-one/"
-#URLS[elantris]="http://www.brandonsanderson.com/annotation/book/Elantris"
-#URLS[mistborn]="http://www.brandonsanderson.com/annotation/book/Mistborn"
-#URLS[mistborn2]="http://www.brandonsanderson.com/annotation/book/Mistborn-2"
-#URLS[mistborn3]="http://www.brandonsanderson.com/annotation/book/Mistborn-3"
+TITLES[mistborn]="Mistborn: The Final Empire"
+URLS[mistborn2]="http://brandonsanderson.com/annotation-mistborn-2-title-page/"
+TITLES[mistborn2]="Mistborn: The Well of Ascension"
+URLS[mistborn3]="http://brandonsanderson.com/annotation-mistborn-3-dedication/"
+TITLES[mistborn3]="Mistborn: Hero of Ages"
+URLS[warbreaker]="http://brandonsanderson.com/annotation-warbreaker-dedication/"
+TITLES[warbreaker]="Warbreaker"
 
 # need to check if requirements are satisfied
 #   better to fail now than later
 ./check_requirements.py || { echo 'Requirements not satisfied'; exit 1; }
 
-#XXX: TESTING ONLY
-# need to clear out old files to re-run fetch
-#rm -rf /tmp/epub/*
-
 for book in $BOOKS; do
   url=${URLS[$book]}
+  title=${TITLES[$book]}
   datadir="tmp/epub/${book}-data"
   epubdir="tmp/epub/${book}-annotations"
 
@@ -29,18 +31,15 @@ for book in $BOOKS; do
   if [ ! -d $datadir ]; then
     mkdir -p $datadir
   fi
-  ./get_book.py "$book Annotations" "Brandon Sanderson" "$url" "$datadir" || { echo 'Failed to get book data'; exit 1; }
+  ./get_book.py "$title" "Brandon Sanderson" "$url" "$datadir" || { echo 'Failed to get book data'; exit 1; }
   echo ""
-
-  #XXX: TESTING
-  exit 1
 
   # Create book
   rm -rf $epubdir
-  rm -rf /tmp/epub/${book}*.epub
+  rm -rf tmp/epub/${book}*.epub
   mkdir -p $datadir
   echo "Creating ePub"
-  ./gen_epub.py "$datadir" "$epubdir"
+  ./gen_epub.py "$datadir" "$epubdir" || { echo 'Failed to generate book'; exit 1; }
   echo "Created"
 done
 

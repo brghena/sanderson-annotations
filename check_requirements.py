@@ -32,3 +32,10 @@ except ImportError:
     print('sudo pip install unidecode')
     sys.exit(1)
 
+try:
+    import titlecase
+except ImportError:
+    print('Could not import titlecase')
+    print('sudo pip install titlecase')
+    sys.exit(1)
+

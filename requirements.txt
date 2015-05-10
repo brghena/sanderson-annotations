@@ -1,0 +1,6 @@
+BeautifulSoup4
+genshi
+lxml
+unidecode
+titlecase
+

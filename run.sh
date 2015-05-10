@@ -22,8 +22,8 @@ TITLES[warbreaker]="Warbreaker"
 for book in $BOOKS; do
   url=${URLS[$book]}
   title=${TITLES[$book]}
-  datadir="tmp/epub/${book}-data"
-  epubdir="tmp/epub/${book}-annotations"
+  datadir="epub/${book}-data"
+  epubdir="epub/${book}-annotations"
 
   echo "Creating annotations book for $book from $url"
 
@@ -36,7 +36,7 @@ for book in $BOOKS; do
 
   # Create book
   rm -rf $epubdir
-  rm -rf tmp/epub/${book}*.epub
+  rm -rf epub/${book}*.epub
   mkdir -p $datadir
   echo "Creating ePub"
   ./gen_epub.py "$datadir" "$epubdir" || { echo 'Failed to generate book'; exit 1; }

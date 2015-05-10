@@ -30,7 +30,7 @@ class Annotation(data.Annotation):
 class Chapter(data.Chapter):
   def __init__(self, data, dirname):
     super(Chapter, self).__init__(data['url'], data['number'])
-    self.title = data['title']
+    self.title = unidecode.unidecode(data['title'])
 
     # read file
     f = codecs.open(self.filename(dirname), encoding='utf-8')

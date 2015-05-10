@@ -30,8 +30,6 @@ class Annotation(data.Annotation):
 
     # get the individual links
     urls = [option.get("value") for option in res.find_all("option")]
-    #XXX:TESTING
-    urls = urls[0:5]
 
     # parse out chapters
     chap_num = 1
@@ -89,8 +87,10 @@ class Chapter(data.Chapter):
         sys.exit(1)
 
     # remove all unwanted tags
-    #   takes a couple of steps as I keep finding more cruft
-    for tag in self.body.find_all(['a', 'script', 'select', 'span', 'h1', 'hr']):
+    #   Takes a couple of steps as I keep finding more cruft
+    #   Do not remove <a> as the link text can stay
+    #   Do remove H1 because it is repetitive titling
+    for tag in self.body.find_all(['script', 'select', 'span', 'h1', 'hr']):
         tag.extract()
     for tag in self.body.find_all("p", "post-meta"):
         tag.extract()

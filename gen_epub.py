@@ -6,6 +6,7 @@ import json
 import sys
 import ez_epub
 import codecs
+import unidecode
 
 class Annotation(data.Annotation):
   def __init__(self, dirname):
@@ -28,7 +29,8 @@ class Annotation(data.Annotation):
 
 class Chapter(data.Chapter):
   def __init__(self, data, dirname):
-    super(Chapter, self).__init__(data['title'], data['url'], data['number'])
+    super(Chapter, self).__init__(data['url'], data['number'])
+    self.title = data['title']
 
     # read file
     f = codecs.open(self.filename(dirname), encoding='utf-8')
@@ -38,10 +40,18 @@ class Chapter(data.Chapter):
   def generate_epub(self):
     section = ez_epub.Section()
     section.title = self.title
-    text = BeautifulSoup(self.body).body.div.get_text()
-    #print 'Converted body to BS\n%s' % bs
-    #sys.exit(1)
-    for part in text.split('\r'):
+
+    # replace unicode characters with ascii equivalent within the text
+    text = unidecode.unidecode(BeautifulSoup(self.body).body.get_text())
+
+    # replace two spaces after periods with one space
+    #   okay, this one is a personal choice. I guess...
+    text = text.replace('.  ', '. ')
+    text = text.replace('!  ', '! ')
+    text = text.replace('?  ', '? ')
+
+    # remove extraneous end of line characters and record text
+    for part in text.split('\n'):
       part = part.strip()
       if len(part) == 0:
         continue

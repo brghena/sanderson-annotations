@@ -25,3 +25,10 @@ except ImportError:
     print('sudo pip install lxml')
     sys.exit(1)
 
+try:
+    import unidecode
+except ImportError:
+    print('Could not import unidecode')
+    print('sudo pip install unidecode')
+    sys.exit(1)
+

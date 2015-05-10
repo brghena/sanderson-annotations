@@ -111,6 +111,7 @@ class Chapter(data.Chapter):
             sys.exit(1)
         else:
             div.unwrap()
+
     # remove remaining irrelevant divs
     for tag in self.body.find_all("div"):
         tag.extract()

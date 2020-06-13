@@ -1,16 +1,18 @@
-#!/usr/bin/python
+#! /usr/bin/env python
 
 import data
 from bs4 import BeautifulSoup
 import json
 import re
 import sys
-import urllib2
-import urlparse
+import urllib.request, urllib.error, urllib.parse
+import urllib.parse
 import titlecase
 
 def fetch(url):
-  raw = urllib2.urlopen(url).read()
+  headers={'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'}
+  request=urllib.request.Request(url, None, headers)
+  raw = urllib.request.urlopen(request).read()
   return BeautifulSoup(raw)
 
 class Annotation(data.Annotation):
@@ -25,7 +27,7 @@ class Annotation(data.Annotation):
     # get the dropdown menu with the urls
     res = content.find("select", "category-posts-dropdown")
     if res == None:
-        print("Error: Could not find dropdown menu at url '" + str(self.url) + "'")
+        print(("Error: Could not find dropdown menu at url '" + str(self.url) + "'"))
         sys.exit(1)
 
     # get the individual links
@@ -68,7 +70,7 @@ class Chapter(data.Chapter):
     super(Chapter, self).__init__(url, number)
 
   def load(self):
-    print('Downloading chapter from ' + str(self.url))
+    print(('Downloading chapter from ' + str(self.url)))
     content = fetch(self.url)
 
     # get the chapter title
@@ -83,7 +85,7 @@ class Chapter(data.Chapter):
     # find body
     self.body = content.find("article")
     if self.body == None:
-        print("Error: Could not find article text at url '" + str(self.url) + "'")
+        print(("Error: Could not find article text at url '" + str(self.url) + "'"))
         sys.exit(1)
 
     # remove all unwanted tags
@@ -110,7 +112,7 @@ class Chapter(data.Chapter):
         # remove div surrounding spoiler contents
         div = self.body.find("div", "sh-content")
         if div == None:
-            print("Error: No div string found at url '" + str(self.url) + "'")
+            print(("Error: No div string found at url '" + str(self.url) + "'"))
             sys.exit(1)
         else:
             div.unwrap()
@@ -129,9 +131,9 @@ class Chapter(data.Chapter):
 
   def save(self, dirname):
     f = open(self.filename(dirname), 'w')
-    text = unicode(self.body)
+    text = str(self.body)
     # fix weird characters
-    text.replace('\ufffd', '\'')
+    text.replace('\\ufffd', '\'')
     f.write(text.encode('UTF-8'))
     f.close()
 
@@ -143,7 +145,7 @@ class Chapter(data.Chapter):
 
 if __name__ == '__main__':
   if len(sys.argv) != 5:
-    print(sys.argv)
+    print((sys.argv))
     print('Usage: get_book.py title author root_url savedir')
     sys.exit(1)
 

@@ -14,8 +14,8 @@ class Annotation(object):
       self.title, self.author)
 
   def display(self):
-    print '%s (loaded from %s)' % (
-      self.name(), self.url)
+    print('%s (loaded from %s)' % (
+      self.name(), self.url))
 
     for chapter in self.chapters:
       chapter.display()
@@ -36,8 +36,8 @@ class Chapter(object):
     return str(self.title)
 
   def display(self):
-    print '%s' % self.name()
-    print '  %s...' % str(self.body)[0:100]
+    print('%s' % self.name())
+    print('  %s...' % str(self.body)[0:100])
 
   def filename(self, datadir):
     return os.path.join(datadir, 'chap_%02d.txt' % self.number)

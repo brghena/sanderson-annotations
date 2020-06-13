@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#! /usr/bin/env python
 
 from bs4 import BeautifulSoup
 import data
@@ -60,7 +60,7 @@ class Chapter(data.Chapter):
 
 if __name__ == '__main__':
   if len(sys.argv) != 3:
-    print 'Usage: gen_epub.py datadir epubdir'
+    print('Usage: gen_epub.py datadir epubdir')
     sys.exit(1)
 
   datadir = sys.argv[1]
@@ -73,7 +73,7 @@ if __name__ == '__main__':
   # read data
   annotation = Annotation(datadir)
   book = annotation.generate_epub()
-  print 'Starting epub generation...'
+  print('Starting epub generation...')
   book.make(epubdir)
-  print 'Done!'
+  print('Done!')
 

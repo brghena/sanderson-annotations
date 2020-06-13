@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BOOKS="elantris mistborn mistborn2 mistborn3 warbreaker"
+BOOKS="elantris mistborn mistborn2 mistborn3 mistborn4 stormlight warbreaker"
 
 declare -A URLS
 declare -A TITLES
@@ -12,6 +12,10 @@ URLS[mistborn2]="http://brandonsanderson.com/annotation-mistborn-2-title-page/"
 TITLES[mistborn2]="Mistborn: The Well of Ascension"
 URLS[mistborn3]="http://brandonsanderson.com/annotation-mistborn-3-dedication/"
 TITLES[mistborn3]="Mistborn: Hero of Ages"
+URLS[mistborn4]="https://www.brandonsanderson.com/annotation-the-alloy-of-law-chapter-two/"
+TITLES[mistborn4]="Wax and Wayne: Alloy of Law"
+URLS[stormlight]="https://www.brandonsanderson.com/annotation-the-way-of-kings-introduction/"
+TITLES[stormlight]="The Stormlight Archives: The Way of Kings"
 URLS[warbreaker]="http://brandonsanderson.com/annotation-warbreaker-dedication/"
 TITLES[warbreaker]="Warbreaker"
 

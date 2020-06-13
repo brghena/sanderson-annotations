@@ -1,9 +1,11 @@
 sanderson-annotations
 =====================
 
+**Nonfunctional:** brandonsanderson.com has changed layout in the last several years and this codebase no longer succeeds at its purpose. Feel free to fork it or submit PRs to adjust to the revised website layout, but don't expect this code to work as-is.
+
+
 Reads Brandon Sanderson's book annotations and formats as an epub book.
 
-http://brandonsanderson.com/about-the-annotation-system-introduction/
 
 Install
 -------
